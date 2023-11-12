@@ -9,9 +9,9 @@ This is a smart contract that implements the `require()`, `assert()` and `revert
   - [Overview](#overview)
   - [Contract Details](#contract-details)
     - [Owner Management](#owner-management)
-    - [View Owner](#view-owner)
-    - [Change Owner](#change-owner)
-    - [Error Handling](#error-handling)
+    - [getOwner](#getowner)
+    - [setOwner](#setowner)
+    - [checkNumber](#checknumber)
   - [Authors](#authors)
   - [License](#license)
 
@@ -25,17 +25,17 @@ The `ErrorHandler` is a simple Ethereum smart contract written in Solidity, whic
 
 The contract provides an `owner` variable to store the Ethereum address of the owner. The owner is initially set to the address that deploys the contract.
 
-### View Owner
+### getOwner
 
 The `getOwner` function allows anyone to check and retrieve the current owner's Ethereum address. However, it enforces a requirement that the caller must be the owner to access this information. If the caller is not the owner, an error message is provided.
 
-### Change Owner
+### setOwner
 
 The `setOwner` function enables the owner to transfer ownership to a new Ethereum address. This function is restricted to the current owner; if the caller is not the owner, an error is raised.
 
-### Error Handling
+### checkNumber
 
-The testAssert function demonstrates the use of the assert statement in Solidity. It asserts that the variable number is equal to 0. If this condition is not met, it will result in an unrecoverable error, effectively terminating the execution of the contract. This function is for illustrative purposes and does not have a direct practical application.
+The `checkNumber` function demonstrates the use of the assert statement in Solidity. It asserts that the variable number is equal to the input parameter, `newNumber`. If this condition is not met, it will result in an unrecoverable error, effectively terminating the execution of the contract. This function is for illustrative purposes and does not have a direct practical application.
 
 ## Authors
 

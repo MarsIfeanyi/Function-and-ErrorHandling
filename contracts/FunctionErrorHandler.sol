@@ -9,7 +9,7 @@ pragma solidity >=0.7.0 <0.9.0;
  */
 contract FunctionErrorHandler {
     address public owner;
-    uint256 number;
+    uint256 number = 20;
 
     error NotOwner();
 
@@ -43,7 +43,7 @@ contract FunctionErrorHandler {
         return owner;
     }
 
-    function testAssert() public view {
-        assert(number == 0);
+    function checkNumber(uint256 newNumber) public view {
+        assert(number == newNumber);
     }
 }
