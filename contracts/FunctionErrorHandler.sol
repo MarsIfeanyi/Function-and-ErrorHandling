@@ -24,10 +24,15 @@ contract StudentDatabase {
         uint256 _age,
         string memory _techStack
     ) public {
+        require(bytes(_name).length > 4, "Name greater than 4 letters");
+
+        require(_age != 0, "Age cannot be Zero");
+
         require(
-            bytes(students[msg.sender].name).length == 0,
-            "Profile already exists"
+            bytes(_techStack).length > 4,
+            "TechStack  greater than 4 letters"
         );
+
         students[msg.sender] = Student(_name, _age, _techStack);
     }
 
@@ -43,7 +48,7 @@ contract StudentDatabase {
         assert(students[msg.sender].age == _age);
     }
 
-    function confirmStudentAge(string calldata _techStack) public view {
+    function confirmStudentTechStack(string calldata _techStack) public view {
         string memory techStack = students[msg.sender].techStack;
         assert(
             keccak256(abi.encodePacked(techStack)) ==
