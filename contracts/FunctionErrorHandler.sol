@@ -2,48 +2,85 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 /**
- * @title Function and Error Handlers in Solidity Smart Contract
+ * @title Simple Student DataBase with Function and Error Handlers in Solidity Smart Contract
  * @author Marcellus Ifeanyi
  * @notice This demostrates understanding and the use of `require()`, `assert()` and `revert()` to handle errors in solidity smart contract
  * @dev This is a smart contract that implements the require(), assert() and revert() statements for error handling
  */
-contract FunctionErrorHandler {
-    address public owner;
-    uint256 number = 20;
 
-    error NotOwner();
+contract StudentDatabase {
+    error ProfileDoesNotExist();
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only Owner can call this function");
-        _;
+    struct Student {
+        string name;
+        uint256 age;
+        string techStack;
     }
 
-    constructor() {
-        // Initialize owner
-        owner = msg.sender;
+    mapping(address => Student) public students;
+
+    function createStudentProfile(
+        string memory _name,
+        uint256 _age,
+        string memory _techStack
+    ) public {
+        require(
+            bytes(students[msg.sender].name).length == 0,
+            "Profile already exists"
+        );
+        students[msg.sender] = Student(_name, _age, _techStack);
     }
 
-    function setOwner(address _newOwner) public onlyOwner {
-        if (msg.sender != owner) {
-            revert("Not Owner");
-        }
-        owner = _newOwner;
+    function confirmStudentName(string calldata _name) public view {
+        string memory name = students[msg.sender].name;
+        assert(
+            keccak256(abi.encodePacked(name)) ==
+                keccak256(abi.encodePacked(_name))
+        );
     }
 
-    function setOwner2(address _newOwner) public onlyOwner {
-        // reverts with custom error
-        if (msg.sender != owner) {
-            revert NotOwner();
-        }
-        owner = _newOwner;
+    function confirmStudentAge(uint _age) public view {
+        assert(students[msg.sender].age == _age);
     }
 
-    function getOwner() public view returns (address) {
-        require(msg.sender == owner, "Not the owner");
-        return owner;
+    function confirmStudentAge(string calldata _techStack) public view {
+        string memory techStack = students[msg.sender].techStack;
+        assert(
+            keccak256(abi.encodePacked(techStack)) ==
+                keccak256(abi.encodePacked(_techStack))
+        );
     }
 
-    function checkNumber(uint256 newNumber) public view {
-        assert(number == newNumber);
+    function updateProfile(
+        string memory _name,
+        uint256 _age,
+        string memory _techStack
+    ) public {
+        require(
+            bytes(students[msg.sender].name).length != 0,
+            "Profile does not exist"
+        );
+        students[msg.sender] = Student(_name, _age, _techStack);
+    }
+
+    function deleteProfile() public {
+        if (bytes(students[msg.sender].name).length == 0)
+            revert ProfileDoesNotExist();
+
+        delete students[msg.sender];
+    }
+
+    function viewProfile()
+        public
+        view
+        returns (string memory, uint256, string memory)
+    {
+        if (bytes(students[msg.sender].name).length == 0)
+            revert ProfileDoesNotExist();
+        return (
+            students[msg.sender].name,
+            students[msg.sender].age,
+            students[msg.sender].techStack
+        );
     }
 }
