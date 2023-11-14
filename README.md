@@ -1,46 +1,94 @@
 # Function and ErrorHandler in Smart Contract
 
-This is a smart contract that implements the `require()`, `assert()` and `revert()` statements to handle errors in solidity smart contract
+This is a smart contract that implements the `require()`, `assert()` and `revert()` statements to handle errors in Student DataBase in solidity smart contract
 
 ## Table of Contents
 
 - [Function and ErrorHandler in Smart Contract](#function-and-errorhandler-in-smart-contract)
   - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
   - [Contract Details](#contract-details)
-    - [Owner](#owner)
-    - [getOwner](#getowner)
-    - [setOwner](#setowner)
-    - [checkNumber](#checknumber)
+    - [Student Struct](#student-struct)
+    - [students mapping](#students-mapping)
+    - [createStudentProfile](#createstudentprofile)
+    - [confirmStudentName](#confirmstudentname)
+    - [deleteProfile](#deleteprofile)
     - [Demo Video](#demo-video)
   - [Authors](#authors)
   - [License](#license)
 
-## Overview
-
-The `ErrorHandler` is a simple Ethereum smart contract written in Solidity, which allows for basic ownership management and error handling. It includes functionalities for managing the contract's owner, asserting conditions, and handling errors gracefully.
-
 ## Contract Details
 
-### Owner
+### Student Struct
 
-The contract provides an `owner` variable to store the Ethereum address of the owner. The owner is initially set to the address that deploys the contract.
+```sh
+ struct Student {
+        string name;
+        uint256 age;
+        string techStack;
+    }
+```
 
-### getOwner
+### students mapping
 
-The `getOwner` function allows anyone to check and retrieve the current owner's Ethereum address. However, it enforces a requirement that the caller must be the owner to access this information. If the caller is not the owner, an error message is provided.
+```sh
+ mapping(address => Student) public students;
+```
 
-### setOwner
+The `students` is the mapping (storage variable) that stores the details of the student.
 
-The `setOwner` function enables the owner to transfer ownership to a new Ethereum address. This function is restricted to the current owner; if the caller is not the owner, an error is raised.
+### createStudentProfile
 
-### checkNumber
+The `createStudentProfile` function allows that allows a student to create a profile. It uses the `require` statements to check that the student `name` and `techStack` is greater than 4 letters and `age` is not equal to zero.
 
-The `checkNumber` function demonstrates the use of the assert statement in Solidity. It asserts that the variable number is equal to the input parameter, `newNumber`. If this condition is not met, it will result in an unrecoverable error, effectively terminating the execution of the contract. This function is for illustrative purposes and does not have a direct practical application.
+```sh
+function createStudentProfile(
+        string memory _name,
+        uint256 _age,
+        string memory _techStack
+    ) public {
+        require(bytes(_name).length > 4, "Name greater than 4 letters");
+
+        require(_age != 0, "Age cannot be Zero");
+
+        require(
+            bytes(_techStack).length > 4,
+            "TechStack  greater than 4 letters"
+        );
+
+        students[msg.sender] = Student(_name, _age, _techStack);
+    }
+```
+
+### confirmStudentName
+
+The `confirmStudentName` functions uses the `assert` statement to compare and check that the input name from a user is the same as the name stored on the `students`storage database.
+
+```sh
+function confirmStudentName(string calldata _name) public view {
+        string memory name = students[msg.sender].name;
+        assert(
+            keccak256(abi.encodePacked(name)) ==
+                keccak256(abi.encodePacked(_name))
+        );
+    }
+```
+
+### deleteProfile
+
+The `deleteProfile` function uses the `revert` statement to check if the student profile already exist. This is to ensure that a user can't delete a profile they haven't created.
+
+```sh
+ function deleteProfile() public {
+        if (bytes(students[msg.sender].name).length == 0)
+            revert ProfileDoesNotExist();
+
+        delete students[msg.sender];
+    }
+```
 
 ### Demo Video
 
-https://www.loom.com/share/50800eddd50f426189630d93e444dc69?sid=dd6df950-d317-42c4-9b81-baaa5c62b730
+https://www.loom.com/share/54d27101c89b47f388cb5a9e1a95512d?sid=64594755-5142-40cd-9959-b41d2388ac2d
 
 ## Authors
 
